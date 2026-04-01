@@ -19,7 +19,8 @@ import type { LoginFieldErrors } from './types';
 
 export function LoginScreen() {
   const t = useTheme();
-  const { status, error: serverError, login } = useAuthStore();
+  const { status, error: serverError, sessionExpiredMessage, login } =
+    useAuthStore();
 
   const passwordRef = useRef<TextInput>(null);
   const [email, setEmail] = useState('');
@@ -68,6 +69,22 @@ export function LoginScreen() {
           </Text>
 
           <View style={{ height: t.spacing.lg }} />
+
+          {sessionExpiredMessage ? (
+            <Text
+              style={[
+                t.typography.caption,
+                {
+                  color: t.colors.danger,
+                  marginBottom: t.spacing.md,
+                  textAlign: 'center',
+                },
+              ]}
+              accessibilityRole="alert"
+            >
+              {sessionExpiredMessage}
+            </Text>
+          ) : null}
 
           <ThemedTextInput
             label="Email"

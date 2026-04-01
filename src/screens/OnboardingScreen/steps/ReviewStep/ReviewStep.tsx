@@ -5,7 +5,6 @@ import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { ThemedButton } from '../../../../components/ui/ThemedButton';
 import { useTheme } from '../../../../hooks/useTheme';
 import type { AppStackParamList } from '../../../../navigation/types';
-import { apiSubmit } from '../../../../api/mockApi';
 import { ApiError } from '../../../../api/errors';
 import { clearOnboardingStorage } from '../../../../lib/storage';
 import { useAuthStore } from '../../../../store/authStore';
@@ -38,7 +37,7 @@ function Field({ label, value }: { label: string; value: string }) {
 export function ReviewStep() {
   const t = useTheme();
   const navigation = useNavigation<Nav>();
-  const session = useAuthStore((s) => s.session);
+  const submitOnboarding = useAuthStore((s) => s.submitOnboarding);
   const {
     draft,
     submissionStatus,
@@ -52,10 +51,9 @@ export function ReviewStep() {
   const isSuccess = submissionStatus === 'success';
 
   const handleSubmit = async () => {
-    if (!session) return;
     setSubmissionStatus('submitting');
     try {
-      await apiSubmit(session.accessToken, draft);
+      await submitOnboarding(draft);
       setSubmissionStatus('success');
       clearOnboardingStorage().catch(() => {});
     } catch (err) {

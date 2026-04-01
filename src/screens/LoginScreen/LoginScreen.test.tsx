@@ -9,6 +9,7 @@ beforeEach(() => {
     user: null,
     session: null,
     error: null,
+    sessionExpiredMessage: null,
   });
 });
 
@@ -69,6 +70,18 @@ describe('LoginScreen', () => {
     fireEvent.press(screen.getByText('Log In'));
 
     expect(loginSpy).toHaveBeenCalledWith('jane@test.com', 'secret');
+  });
+
+  it('displays session expired message when set', () => {
+    useAuthStore.setState({
+      sessionExpiredMessage: 'Session expired. Please sign in again.',
+    });
+
+    render(<LoginScreen />);
+
+    expect(
+      screen.getByText('Session expired. Please sign in again.'),
+    ).toBeTruthy();
   });
 
   it('displays a server error from the store', () => {

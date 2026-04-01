@@ -21,11 +21,15 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      useThemeStore.getState().hydrate(),
-      useAuthStore.getState().hydrate(),
-      useOnboardingStore.getState().hydrate(),
-    ]).finally(() => setReady(true));
+    (async () => {
+      await Promise.all([
+        useThemeStore.getState().hydrate(),
+        useAuthStore.getState().hydrate(),
+        useOnboardingStore.getState().hydrate(),
+      ]);
+      await useAuthStore.getState().bootstrapSession();
+      setReady(true);
+    })();
   }, []);
 
   if (!ready) {
