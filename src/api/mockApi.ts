@@ -67,7 +67,7 @@ function randomSuffix(): string {
 }
 
 function defaultAccessTtlMs(): number {
-  return 2 * 60 * 1000;
+  return 15 * 60 * 1000;
 }
 
 function issueSession(user: User): Session {

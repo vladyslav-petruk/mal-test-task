@@ -1,8 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { Dimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, StyleSheet, View } from 'react-native';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { RootNavigator } from './src/navigation/RootNavigator';
+import { useAuthStore } from './src/store/authStore';
+import { useOnboardingStore } from './src/store/onboardingStore';
 import { useThemeStore } from './src/store/themeStore';
 
 const { width = 0, height = 0 } = Dimensions.get('window');
@@ -15,6 +18,23 @@ const fallbackMetrics = {
 
 export default function App() {
   const themeMode = useThemeStore((s) => s.mode);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    Promise.all([
+      useThemeStore.getState().hydrate(),
+      useAuthStore.getState().hydrate(),
+      useOnboardingStore.getState().hydrate(),
+    ]).finally(() => setReady(true));
+  }, []);
+
+  if (!ready) {
+    return (
+      <View style={styles.splash}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics ?? fallbackMetrics}>
@@ -23,3 +43,7 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  splash: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+});

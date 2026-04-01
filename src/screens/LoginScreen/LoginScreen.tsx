@@ -10,11 +10,12 @@ import {
   View,
 } from 'react-native';
 
-import { ThemedButton } from '../components/ui/ThemedButton';
-import { ThemedTextInput } from '../components/ui/ThemedTextInput';
-import { useTheme } from '../hooks/useTheme';
-import { validateLoginFields } from '../lib/validation';
-import { useAuthStore } from '../store/authStore';
+import { ThemedButton } from '../../components/ui/ThemedButton';
+import { ThemedTextInput } from '../../components/ui/ThemedTextInput';
+import { useTheme } from '../../hooks/useTheme';
+import { validateLoginFields } from '../../lib/validation';
+import { useAuthStore } from '../../store/authStore';
+import type { LoginFieldErrors } from './types';
 
 export function LoginScreen() {
   const t = useTheme();
@@ -23,10 +24,7 @@ export function LoginScreen() {
   const passwordRef = useRef<TextInput>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<{
-    email?: string;
-    password?: string;
-  }>({});
+  const [fieldErrors, setFieldErrors] = useState<LoginFieldErrors>({});
 
   const isLoading = status === 'logging_in';
 
@@ -43,7 +41,16 @@ export function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={[styles.root, { backgroundColor: t.colors.background }]}
       >
-        <View style={[styles.card, { backgroundColor: t.colors.surface, borderRadius: t.radius.md, padding: t.spacing.lg }]}>
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: t.colors.surface,
+              borderRadius: t.radius.md,
+              padding: t.spacing.lg,
+            },
+          ]}
+        >
           <Text style={[styles.title, { color: t.colors.text }]}>Sign In</Text>
           <Text style={[styles.subtitle, { color: t.colors.textMuted }]}>
             Enter your credentials to continue
@@ -57,7 +64,8 @@ export function LoginScreen() {
             value={email}
             onChangeText={(v) => {
               setEmail(v);
-              if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+              if (fieldErrors.email)
+                setFieldErrors((p) => ({ ...p, email: undefined }));
             }}
             error={fieldErrors.email}
             autoCapitalize="none"
@@ -92,7 +100,10 @@ export function LoginScreen() {
 
           {serverError ? (
             <Text
-              style={[styles.serverError, { color: t.colors.danger, marginTop: t.spacing.md }]}
+              style={[
+                styles.serverError,
+                { color: t.colors.danger, marginTop: t.spacing.md },
+              ]}
             >
               {serverError}
             </Text>
