@@ -9,7 +9,9 @@ import type { RootStackParamList } from './types';
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
-  const isLoggedIn = useAuthStore((s) => s.status === 'logged_in');
+  const isLoggedIn = useAuthStore(
+    (s) => s.status === 'logged_in' || s.status === 'refreshing',
+  );
 
   return (
     <NavigationContainer>

@@ -1,3 +1,5 @@
-/** Buttons, inputs, typography — token-driven building blocks. */
+export { ThemedButton } from './ThemedButton';
+export type { ThemedButtonProps, ThemedButtonVariant } from './ThemedButton';
 
-export {};
+export { ThemedTextInput } from './ThemedTextInput';
+export type { ThemedTextInputProps } from './ThemedTextInput';

@@ -1,5 +1,9 @@
-/**
- * Shared UI: prefer `components/ui/` for primitives, feature subfolders as needed.
- */
-
-export {};
+export {
+  ThemedButton,
+  ThemedTextInput,
+} from './ui';
+export type {
+  ThemedButtonProps,
+  ThemedButtonVariant,
+  ThemedTextInputProps,
+} from './ui';

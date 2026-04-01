@@ -3,6 +3,7 @@ import { Dimensions } from 'react-native';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { RootNavigator } from './src/navigation/RootNavigator';
+import { useThemeStore } from './src/store/themeStore';
 
 const { width = 0, height = 0 } = Dimensions.get('window');
 
@@ -13,10 +14,12 @@ const fallbackMetrics = {
 };
 
 export default function App() {
+  const themeMode = useThemeStore((s) => s.mode);
+
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics ?? fallbackMetrics}>
       <RootNavigator />
-      <StatusBar style="auto" />
+      <StatusBar style={themeMode === 'dark' ? 'light' : 'dark'} />
     </SafeAreaProvider>
   );
 }

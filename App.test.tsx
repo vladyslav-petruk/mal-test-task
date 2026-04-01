@@ -6,7 +6,7 @@ describe('App', () => {
   it('shows auth stack when logged out', () => {
     render(<App />);
 
-    expect(screen.getByText('Login')).toBeTruthy();
+    expect(screen.getByText('Sign In')).toBeTruthy();
   });
 });
 
