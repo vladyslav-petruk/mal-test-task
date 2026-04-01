@@ -10,4 +10,4 @@ export {
   resetMockApiState,
   setMockApiOptions,
 } from './mockApi';
-export type { LoginResponse, MockApiOptions } from './mockApi';
+export type { LoginResponse, MockApiOptions, SimulatedHttpFailure } from './mockApi';

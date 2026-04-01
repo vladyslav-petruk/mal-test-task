@@ -8,20 +8,25 @@ export type LoginResponse = {
   session: Session;
 };
 
+/** Deterministic one-shot HTTP failures for tests/demo (cleared after the matching call). */
+export type SimulatedHttpFailure = 400 | 401 | 500;
+
 /** Tunable mock behavior (e.g. tests can tweak before calling). */
 export type MockApiOptions = {
   /** Artificial delay applied to each call (ms). */
   delayMs: number;
-  /** If true, `apiLogin` rejects with a 500 once (then resets). */
-  simulateLoginTransientFailureOnce: boolean;
-  /** If true, `apiSubmit` rejects with a 500 once (then resets). */
-  simulateSubmitTransientFailureOnce: boolean;
+  /** Next `apiLogin` fails with this status once, then cleared. */
+  loginFailureOnce?: SimulatedHttpFailure;
+  /** Next `apiRefresh` fails with this status once, then cleared. */
+  refreshFailureOnce?: SimulatedHttpFailure;
+  /** Next `apiMe` fails with this status once, then cleared. */
+  meFailureOnce?: SimulatedHttpFailure;
+  /** Next `apiSubmit` fails with this status once, then cleared. */
+  submitFailureOnce?: SimulatedHttpFailure;
 };
 
 let options: MockApiOptions = {
   delayMs: DEFAULT_DELAY_MS,
-  simulateLoginTransientFailureOnce: false,
-  simulateSubmitTransientFailureOnce: false,
 };
 
 export function setMockApiOptions(partial: Partial<MockApiOptions>): void {
@@ -40,8 +45,6 @@ export function resetMockApiState(): void {
   nextId = 1;
   options = {
     delayMs: DEFAULT_DELAY_MS,
-    simulateLoginTransientFailureOnce: false,
-    simulateSubmitTransientFailureOnce: false,
   };
 }
 
@@ -98,6 +101,43 @@ function assertValidAccessToken(accessToken: string): { userId: string } {
   return { userId: row.userId };
 }
 
+function codeForStatus(status: SimulatedHttpFailure): 'BAD_REQUEST' | 'UNAUTHORIZED' | 'SERVER_ERROR' {
+  if (status === 400) return 'BAD_REQUEST';
+  if (status === 401) return 'UNAUTHORIZED';
+  return 'SERVER_ERROR';
+}
+
+/** Throws `ApiError` for a simulated status; optional `fieldErrors` only for 400 + submit. */
+function throwSimulatedHttpFailure(
+  status: SimulatedHttpFailure,
+  endpoint: 'login' | 'refresh' | 'me' | 'submit',
+): never {
+  const code = codeForStatus(status);
+  const message = `Simulated ${status} (${endpoint})`;
+  const fieldErrors =
+    status === 400 && endpoint === 'submit'
+      ? { _simulated: 'Simulated validation failure' }
+      : undefined;
+  throw new ApiError(message, { status, code, fieldErrors });
+}
+
+function takeSimulatedFailureOnce(
+  endpoint: 'login' | 'refresh' | 'me' | 'submit',
+): SimulatedHttpFailure | undefined {
+  const key =
+    endpoint === 'login'
+      ? 'loginFailureOnce'
+      : endpoint === 'refresh'
+        ? 'refreshFailureOnce'
+        : endpoint === 'me'
+          ? 'meFailureOnce'
+          : 'submitFailureOnce';
+  const status = options[key];
+  if (status === undefined) return undefined;
+  setMockApiOptions({ [key]: undefined } as Partial<MockApiOptions>);
+  return status;
+}
+
 function collectDraftFieldErrors(draft: OnboardingDraft): Record<string, string> {
   const e: Record<string, string> = {};
   const p = draft.profile;
@@ -128,12 +168,9 @@ function collectDraftFieldErrors(draft: OnboardingDraft): Record<string, string>
 export async function apiLogin(email: string, password: string): Promise<LoginResponse> {
   await mockDelay(options.delayMs);
 
-  if (options.simulateLoginTransientFailureOnce) {
-    options.simulateLoginTransientFailureOnce = false;
-    throw new ApiError('Temporary server error', {
-      status: 500,
-      code: 'SERVER_ERROR',
-    });
+  const simulated = takeSimulatedFailureOnce('login');
+  if (simulated !== undefined) {
+    throwSimulatedHttpFailure(simulated, 'login');
   }
 
   const normalizedEmail = email.trim().toLowerCase();
@@ -154,6 +191,11 @@ export async function apiLogin(email: string, password: string): Promise<LoginRe
  */
 export async function apiRefresh(refreshToken: string): Promise<Session> {
   await mockDelay(options.delayMs);
+
+  const simulated = takeSimulatedFailureOnce('refresh');
+  if (simulated !== undefined) {
+    throwSimulatedHttpFailure(simulated, 'refresh');
+  }
 
   const row = refreshByToken.get(refreshToken);
   if (!row) {
@@ -182,6 +224,11 @@ export async function apiRefresh(refreshToken: string): Promise<Session> {
 export async function apiMe(accessToken: string): Promise<User> {
   await mockDelay(options.delayMs);
 
+  const simulated = takeSimulatedFailureOnce('me');
+  if (simulated !== undefined) {
+    throwSimulatedHttpFailure(simulated, 'me');
+  }
+
   const { userId } = assertValidAccessToken(accessToken);
   const user = userById.get(userId);
   if (!user) {
@@ -203,15 +250,12 @@ export async function apiSubmit(
 ): Promise<SubmissionResult> {
   await mockDelay(options.delayMs);
 
-  assertValidAccessToken(accessToken);
-
-  if (options.simulateSubmitTransientFailureOnce) {
-    options.simulateSubmitTransientFailureOnce = false;
-    throw new ApiError('Temporary server error', {
-      status: 500,
-      code: 'SERVER_ERROR',
-    });
+  const simulated = takeSimulatedFailureOnce('submit');
+  if (simulated !== undefined) {
+    throwSimulatedHttpFailure(simulated, 'submit');
   }
+
+  assertValidAccessToken(accessToken);
 
   const fieldErrors = collectDraftFieldErrors(draft);
   if (Object.keys(fieldErrors).length > 0) {
