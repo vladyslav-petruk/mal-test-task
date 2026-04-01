@@ -141,6 +141,25 @@ describe('ReviewStep', () => {
     expect(useOnboardingStore.getState().submissionStatus).toBe('error');
   });
 
+  it('does not call submit API when client-side draft validation fails', async () => {
+    const submitSpy = jest.spyOn(mockApi, 'apiSubmit');
+    useOnboardingStore.setState({
+      draft: {
+        ...FILLED_DRAFT,
+        profile: { ...FILLED_DRAFT.profile, fullName: '' },
+        consents: { termsAccepted: true },
+      },
+    });
+
+    render(<ReviewStep />);
+
+    fireEvent.press(screen.getByText('Submit'));
+
+    expect(submitSpy).not.toHaveBeenCalled();
+    expect(screen.getByText('Full name is required')).toBeTruthy();
+    expect(useOnboardingStore.getState().submissionStatus).toBe('error');
+  });
+
   it('dispatches navigation reset when "Back to Home" is pressed', async () => {
     useOnboardingStore.setState({ submissionStatus: 'success' });
 

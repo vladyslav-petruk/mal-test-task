@@ -46,4 +46,15 @@ describe('ProfileStep', () => {
     expect(state.draft.profile.nationality).toBe('CA');
     expect(state.currentStep).toBe(1);
   });
+
+  it('shows validation errors and does not advance when inputs are invalid', () => {
+    render(<ProfileStep />);
+
+    fireEvent.press(screen.getByText('Next'));
+
+    expect(screen.getByText('Full name is required')).toBeTruthy();
+    expect(screen.getByText('Date of birth is required')).toBeTruthy();
+    expect(screen.getByText('Nationality is required')).toBeTruthy();
+    expect(useOnboardingStore.getState().currentStep).toBe(0);
+  });
 });

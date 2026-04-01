@@ -1,14 +1,17 @@
-import { render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 
+import { getOnboardingLabel } from '../../lib/onboardingUi';
 import { useAuthStore } from '../../store/authStore';
 import { useOnboardingStore } from '../../store/onboardingStore';
-import { getOnboardingLabel, HomeScreen } from './HomeScreen';
+import { HomeScreen } from './HomeScreen';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({ navigate: jest.fn() }),
 }));
 
 beforeEach(() => {
+  jest.spyOn(Alert, 'alert').mockImplementation(jest.fn());
   useAuthStore.setState({
     status: 'logged_in',
     user: { id: '1', email: 'jane@test.com', fullName: 'Jane Doe' },
@@ -19,6 +22,10 @@ beforeEach(() => {
     currentStep: 0,
     submissionStatus: 'idle',
   });
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe('getOnboardingLabel', () => {
@@ -84,5 +91,48 @@ describe('HomeScreen', () => {
     render(<HomeScreen />);
 
     expect(screen.getByText('Settings')).toBeTruthy();
+  });
+
+  it('opens confirmation alert before clearing onboarding info', () => {
+    render(<HomeScreen />);
+
+    fireEvent.press(screen.getByText('Clear Onboarding Info'));
+
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Clear onboarding information?',
+      'This will remove your saved onboarding draft and status. You can start again from Step 1.',
+      expect.any(Array),
+    );
+  });
+
+  it('clears onboarding state after confirm action', () => {
+    useOnboardingStore.setState({
+      currentStep: 4,
+      submissionStatus: 'success',
+      draft: {
+        ...useOnboardingStore.getState().draft,
+        profile: {
+          ...useOnboardingStore.getState().draft.profile,
+          fullName: 'To Be Cleared',
+        },
+      },
+    });
+
+    render(<HomeScreen />);
+    fireEvent.press(screen.getByText('Clear Onboarding Info'));
+
+    const buttons = (Alert.alert as jest.Mock).mock.calls[0][2] as {
+      text?: string;
+      onPress?: () => void;
+    }[];
+    const confirmButton = buttons.find((b) => b.text === 'Clear');
+    act(() => {
+      confirmButton?.onPress?.();
+    });
+
+    const state = useOnboardingStore.getState();
+    expect(state.currentStep).toBe(0);
+    expect(state.submissionStatus).toBe('idle');
+    expect(state.draft.profile.fullName).toBe('');
   });
 });

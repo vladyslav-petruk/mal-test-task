@@ -25,9 +25,19 @@ describe('SelfieStep', () => {
     expect(screen.queryByText('Capture Selfie')).toBeNull();
   });
 
-  it('advances to next step on Next', () => {
+  it('does not advance to next step without selfie', () => {
     render(<SelfieStep />);
 
+    fireEvent.press(screen.getByText('Next'));
+
+    expect(useOnboardingStore.getState().currentStep).toBe(2);
+    expect(screen.getByText('Please capture a selfie')).toBeTruthy();
+  });
+
+  it('advances to next step after selfie is captured', () => {
+    render(<SelfieStep />);
+
+    fireEvent.press(screen.getByText('Capture Selfie'));
     fireEvent.press(screen.getByText('Next'));
 
     expect(useOnboardingStore.getState().currentStep).toBe(3);

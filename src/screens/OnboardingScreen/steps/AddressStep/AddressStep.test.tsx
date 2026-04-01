@@ -41,4 +41,16 @@ describe('AddressStep', () => {
     expect(useOnboardingStore.getState().draft.address.city).toBe('Austin');
     expect(useOnboardingStore.getState().currentStep).toBe(2);
   });
+
+  it('shows validation errors and does not advance when invalid', () => {
+    render(<AddressStep />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('US'), 'U');
+    fireEvent.press(screen.getByText('Next'));
+
+    expect(screen.getByText('Address line is required')).toBeTruthy();
+    expect(screen.getByText('City is required')).toBeTruthy();
+    expect(screen.getByText('Use 2-3 letter country code')).toBeTruthy();
+    expect(useOnboardingStore.getState().currentStep).toBe(3);
+  });
 });

@@ -12,3 +12,4 @@ export {
 } from './storage';
 export { validateLoginFields } from './validation';
 export { isAccessTokenExpired } from './session';
+export { getOnboardingLabel, showClearOnboardingConfirmation } from './onboardingUi';

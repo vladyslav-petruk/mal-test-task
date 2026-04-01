@@ -6,6 +6,7 @@ import { ThemedButton } from '../../../../components/ui/ThemedButton';
 import { useTheme } from '../../../../hooks/useTheme';
 import type { AppStackParamList } from '../../../../navigation/types';
 import { ApiError } from '../../../../api/errors';
+import { validateOnboardingDraftForSubmit } from '../../../../lib/validation';
 import { clearOnboardingStorage } from '../../../../lib/storage';
 import { useAuthStore } from '../../../../store/authStore';
 import { useOnboardingStore } from '../../../../store/onboardingStore';
@@ -51,6 +52,11 @@ export function ReviewStep() {
   const isSuccess = submissionStatus === 'success';
 
   const handleSubmit = async () => {
+    const validationError = validateOnboardingDraftForSubmit(draft);
+    if (validationError) {
+      setSubmissionStatus('error', validationError);
+      return;
+    }
     setSubmissionStatus('submitting');
     try {
       await submitOnboarding(draft);

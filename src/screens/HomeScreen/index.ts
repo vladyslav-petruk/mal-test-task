@@ -1,1 +1,1 @@
-export { HomeScreen, getOnboardingLabel } from './HomeScreen';
+export { HomeScreen } from './HomeScreen';

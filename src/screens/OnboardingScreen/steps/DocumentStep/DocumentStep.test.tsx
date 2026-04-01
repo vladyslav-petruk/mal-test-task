@@ -39,4 +39,15 @@ describe('DocumentStep', () => {
     expect(state.draft.document.documentType).toBe('VISA');
     expect(state.currentStep).toBe(0);
   });
+
+  it('shows validation errors and does not advance when invalid', () => {
+    render(<DocumentStep />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('P12345678'), 'X');
+    fireEvent.press(screen.getByText('Next'));
+
+    expect(screen.getByText('Document type is required')).toBeTruthy();
+    expect(screen.getByText('Use 4-20 letters/numbers')).toBeTruthy();
+    expect(useOnboardingStore.getState().currentStep).toBe(1);
+  });
 });

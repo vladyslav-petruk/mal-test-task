@@ -2,12 +2,14 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ThemedButton } from '../../../../components/ui/ThemedButton';
 import { useTheme } from '../../../../hooks/useTheme';
+import { validateOnboardingSelfie } from '../../../../lib/validation';
 import { useOnboardingStore } from '../../../../store/onboardingStore';
 
 export function SelfieStep() {
   const t = useTheme();
   const hasSelfie = useOnboardingStore((s) => s.draft.selfie.hasSelfie);
   const { updateSelfie, nextStep, prevStep } = useOnboardingStore();
+  const selfieError = validateOnboardingSelfie({ hasSelfie }).hasSelfie;
 
   const handleCapture = () => {
     updateSelfie({ hasSelfie: true });
@@ -48,9 +50,24 @@ export function SelfieStep() {
           <ThemedButton title="Back" onPress={prevStep} variant="outline" />
         </View>
         <View style={{ flex: 1 }}>
-          <ThemedButton title="Next" onPress={nextStep} />
+          <ThemedButton
+            title="Next"
+            onPress={nextStep}
+            disabled={Boolean(selfieError)}
+          />
         </View>
       </View>
+
+      {selfieError ? (
+        <Text
+          style={[
+            t.typography.caption,
+            { color: t.colors.danger, marginTop: t.spacing.sm, textAlign: 'center' },
+          ]}
+        >
+          {selfieError}
+        </Text>
+      ) : null}
     </View>
   );
 }

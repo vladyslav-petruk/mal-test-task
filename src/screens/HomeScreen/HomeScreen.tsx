@@ -4,17 +4,15 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ThemedButton } from '../../components/ui/ThemedButton';
 import { useTheme } from '../../hooks/useTheme';
+import {
+  getOnboardingLabel,
+  showClearOnboardingConfirmation,
+} from '../../lib/onboardingUi';
 import type { AppStackParamList } from '../../navigation/types';
 import { useAuthStore } from '../../store/authStore';
 import { useOnboardingStore } from '../../store/onboardingStore';
 
 type Nav = NativeStackNavigationProp<AppStackParamList, 'Home'>;
-
-export function getOnboardingLabel(status: string, step: number): string {
-  if (status === 'success') return 'Completed';
-  if (step > 0) return `In Progress (Step ${step + 1}/5)`;
-  return 'Not Started';
-}
 
 export function HomeScreen() {
   const t = useTheme();
@@ -22,6 +20,7 @@ export function HomeScreen() {
   const user = useAuthStore((s) => s.user);
   const currentStep = useOnboardingStore((s) => s.currentStep);
   const submissionStatus = useOnboardingStore((s) => s.submissionStatus);
+  const resetDraft = useOnboardingStore((s) => s.resetDraft);
   const onboardingLabel = getOnboardingLabel(submissionStatus, currentStep);
 
   return (
@@ -97,6 +96,14 @@ export function HomeScreen() {
       <ThemedButton
         title="Settings"
         onPress={() => navigation.navigate('Settings')}
+        variant="outline"
+      />
+
+      <View style={{ height: t.spacing.md }} />
+
+      <ThemedButton
+        title="Clear Onboarding Info"
+        onPress={() => showClearOnboardingConfirmation(resetDraft)}
         variant="outline"
       />
     </View>
