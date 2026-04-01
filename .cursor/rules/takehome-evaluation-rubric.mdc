@@ -1,0 +1,47 @@
+---
+description: Enforce take-home evaluation priorities and anti-patterns
+alwaysApply: true
+---
+
+# Take-Home Evaluation Rubric Guardrails
+
+Use this rubric for all implementation choices in this repository.
+
+## Prioritize outcomes
+- Ship Milestone 1 completely before expanding scope.
+- Reach Milestone 2 core acceptance: expiry guard, refresh-once-retry, session-safe navigation.
+- Prefer a clean partial solution over broad unstable features.
+
+## Architecture expectations
+- Keep clear separation of concerns: UI, state/store, data access.
+- Use global state only for shared cross-screen concerns.
+- Keep local form editing state local; synchronize intentionally with global draft.
+- Use tokenized theming (no scattered hardcoded colors).
+
+## Session and state correctness
+- Never allow stale or inconsistent UI state.
+- On 401 from protected flows, attempt refresh once then retry once.
+- If refresh fails, logout and route to Login with clear feedback.
+- Preserve onboarding draft across navigation/theme changes/session transitions unless explicitly justified.
+- Clear draft only on successful submission.
+
+## UX resilience requirements
+- Show loading, error, retry, and empty states for key actions.
+- Disable duplicate submits while request is in-flight.
+- Surface meaningful errors; avoid silent failures.
+
+## Testing bar
+- Add meaningful tests, not snapshot noise.
+- Minimum: session lifecycle/store transitions and one submit retry flow test.
+- Test names should clearly describe behavior and expected state transitions.
+
+## Security and logging
+- Do not log PII or sensitive token values.
+- If session persistence is implemented, use secure storage for tokens.
+
+## Anti-patterns to reject
+- Global state for everything.
+- Theme magic values duplicated across screens.
+- "Fixes" that force broad rerenders without root-cause correction.
+- Shipping behavior that only works on your current device path.
+

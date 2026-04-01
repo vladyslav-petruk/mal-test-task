@@ -1,0 +1,41 @@
+---
+description: Milestone-first implementation priorities for the eKYC take-home
+alwaysApply: true
+---
+
+# Implementation Milestones and Quality Bar
+
+## Scope priority
+- Finish Milestone 1 before expanding scope.
+- Complete Milestone 2 core session criteria next.
+- Attempt Milestone 3 only if Milestone 1/2 are stable and tested.
+
+## Milestone 1 essentials
+- Screens: Login, Home, Onboarding (5 steps), Settings.
+- Onboarding global state: draft + current step + submit status.
+- Theme state: light/dark with token-based styling across screens.
+- Submit mock flow: loading, success, and error UX.
+
+## Milestone 2 essentials
+- Auth/session state includes expiry awareness.
+- Route guard redirects expired/unauthenticated users to Login.
+- On 401 from /me or /submit: refresh once, retry once.
+- Refresh failure logs out user and keeps navigation safe.
+- Preserve onboarding draft across session transitions unless intentionally cleared and explained.
+
+## Persistence requirements
+- Persist theme and onboarding draft/current step.
+- Session persistence is optional; if implemented, use secure storage for tokens.
+
+## Testing minimum
+- Unit tests for session lifecycle transitions.
+- One integration-style test for submit retry behavior.
+- Prefer meaningful behavioral assertions over snapshots.
+
+## Anti-pattern blockers
+- No global state for everything.
+- No hardcoded scattered color values.
+- No silent failures.
+- No broad rerender hacks instead of root-cause fixes.
+- No logging of PII or token values.
+
