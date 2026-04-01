@@ -21,15 +21,23 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      await Promise.all([
-        useThemeStore.getState().hydrate(),
-        useAuthStore.getState().hydrate(),
-        useOnboardingStore.getState().hydrate(),
-      ]);
-      await useAuthStore.getState().bootstrapSession();
-      setReady(true);
+      try {
+        await Promise.all([
+          useThemeStore.getState().hydrate(),
+          useAuthStore.getState().hydrate(),
+          useOnboardingStore.getState().hydrate(),
+        ]);
+        await useAuthStore.getState().bootstrapSession();
+      } finally {
+        if (!cancelled) setReady(true);
+      }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (!ready) {
