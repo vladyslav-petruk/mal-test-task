@@ -89,16 +89,4 @@ npm run lint
 - Validation: centralized in `src/lib/validation.ts`
 - Tests: unit + component/integration-style tests for session transitions and onboarding flows
 
-Current status: app is runnable and test suite is green.
 
-## GitHub
-
-After creating a repository on GitHub:
-
-```bash
-git remote add origin git@github.com:<your-username>/<repo-name>.git
-git branch -M main
-git push -u origin main
-```
-
-Use a **private** repo if required, and invite the evaluator when you have their GitHub username.
