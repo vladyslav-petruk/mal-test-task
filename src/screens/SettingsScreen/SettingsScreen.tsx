@@ -11,7 +11,12 @@ export function SettingsScreen() {
   const logout = useAuthStore((s) => s.logout);
 
   return (
-    <View style={[styles.root, { backgroundColor: t.colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        { backgroundColor: t.colors.background, padding: t.spacing.lg },
+      ]}
+    >
       <View
         style={[
           styles.row,
@@ -22,7 +27,9 @@ export function SettingsScreen() {
           },
         ]}
       >
-        <Text style={[styles.label, { color: t.colors.text }]}>Dark Mode</Text>
+        <Text style={[t.typography.rowLabel, { color: t.colors.text }]}>
+          Dark Mode
+        </Text>
         <Switch
           value={mode === 'dark'}
           onValueChange={toggle}
@@ -39,11 +46,10 @@ export function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, padding: 24 },
+  root: { flex: 1 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  label: { fontSize: 16, fontWeight: '500' },
 });

@@ -39,7 +39,13 @@ export function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={[styles.root, { backgroundColor: t.colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: t.colors.background,
+            paddingHorizontal: t.spacing.lg,
+          },
+        ]}
       >
         <View
           style={[
@@ -51,8 +57,13 @@ export function LoginScreen() {
             },
           ]}
         >
-          <Text style={[styles.title, { color: t.colors.text }]}>Sign In</Text>
-          <Text style={[styles.subtitle, { color: t.colors.textMuted }]}>
+          <Text style={[t.typography.hero, { color: t.colors.text }]}>Sign In</Text>
+          <Text
+            style={[
+              t.typography.subtitle,
+              { color: t.colors.textMuted, marginTop: t.spacing.xs },
+            ]}
+          >
             Enter your credentials to continue
           </Text>
 
@@ -101,8 +112,12 @@ export function LoginScreen() {
           {serverError ? (
             <Text
               style={[
-                styles.serverError,
-                { color: t.colors.danger, marginTop: t.spacing.md },
+                t.typography.caption,
+                {
+                  color: t.colors.danger,
+                  marginTop: t.spacing.md,
+                  textAlign: 'center',
+                },
               ]}
             >
               {serverError}
@@ -124,9 +139,6 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
+  root: { flex: 1, justifyContent: 'center' },
   card: { width: '100%' },
-  title: { fontSize: 26, fontWeight: '700' },
-  subtitle: { fontSize: 14, marginTop: 4 },
-  serverError: { fontSize: 13, fontWeight: '500', textAlign: 'center' },
 });

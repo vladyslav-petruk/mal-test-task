@@ -24,7 +24,15 @@ export function HomeScreen() {
   const onboardingLabel = getOnboardingLabel(submissionStatus, currentStep);
 
   return (
-    <View style={[styles.root, { backgroundColor: t.colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: t.colors.background,
+          padding: t.spacing.lg,
+        },
+      ]}
+    >
       <View
         style={[
           styles.card,
@@ -35,22 +43,27 @@ export function HomeScreen() {
           },
         ]}
       >
-        <Text style={[styles.greeting, { color: t.colors.text }]}>
+        <Text style={[t.typography.title, { color: t.colors.text }]}>
           Welcome, {user?.fullName ?? 'User'}
         </Text>
-        <Text style={[styles.email, { color: t.colors.textMuted }]}>
+        <Text
+          style={[
+            t.typography.subtitle,
+            { color: t.colors.textMuted, marginTop: t.spacing.xxs },
+          ]}
+        >
           {user?.email}
         </Text>
 
         <View style={{ height: t.spacing.lg }} />
 
         <View style={styles.statusRow}>
-          <Text style={[styles.statusLabel, { color: t.colors.textMuted }]}>
+          <Text style={[t.typography.bodyMedium, { color: t.colors.textMuted }]}>
             Onboarding
           </Text>
           <Text
             style={[
-              styles.statusValue,
+              t.typography.bodyStrong,
               {
                 color:
                   submissionStatus === 'success'
@@ -90,15 +103,11 @@ export function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, padding: 24, justifyContent: 'center' },
+  root: { flex: 1, justifyContent: 'center' },
   card: { width: '100%' },
-  greeting: { fontSize: 22, fontWeight: '700' },
-  email: { fontSize: 14, marginTop: 2 },
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  statusLabel: { fontSize: 14 },
-  statusValue: { fontSize: 14, fontWeight: '600' },
 });

@@ -40,7 +40,7 @@ export function ThemedButton({
       {loading ? (
         <ActivityIndicator color={textColor} size="small" />
       ) : (
-        <Text style={[styles.text, { color: textColor }]}>{title}</Text>
+        <Text style={[t.typography.button, { color: textColor }]}>{title}</Text>
       )}
     </Pressable>
   );
@@ -48,5 +48,4 @@ export function ThemedButton({
 
 const styles = StyleSheet.create({
   button: { alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  text: { fontSize: 16, fontWeight: '600' },
 });

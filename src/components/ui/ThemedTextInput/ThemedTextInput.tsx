@@ -11,14 +11,16 @@ export const ThemedTextInput = forwardRef<TextInput, ThemedTextInputProps>(
     return (
       <View style={styles.wrapper}>
         {label ? (
-          <Text style={[styles.label, { color: t.colors.textMuted }]}>{label}</Text>
+          <Text style={[t.typography.label, { color: t.colors.textMuted, marginBottom: t.spacing.xs }]}>
+            {label}
+          </Text>
         ) : null}
         <TextInput
           ref={ref}
           accessibilityLabel={label}
           placeholderTextColor={t.colors.textMuted}
           style={[
-            styles.input,
+            t.typography.body,
             {
               backgroundColor: t.colors.surface,
               color: t.colors.text,
@@ -26,13 +28,21 @@ export const ThemedTextInput = forwardRef<TextInput, ThemedTextInputProps>(
               borderRadius: t.radius.md,
               paddingHorizontal: t.spacing.md,
               paddingVertical: t.spacing.sm + 4,
+              borderWidth: 1,
             },
             style,
           ]}
           {...rest}
         />
         {error ? (
-          <Text style={[styles.error, { color: t.colors.danger }]}>{error}</Text>
+          <Text
+            style={[
+              t.typography.fieldError,
+              { color: t.colors.danger, marginTop: t.spacing.xs },
+            ]}
+          >
+            {error}
+          </Text>
         ) : null}
       </View>
     );
@@ -41,7 +51,4 @@ export const ThemedTextInput = forwardRef<TextInput, ThemedTextInputProps>(
 
 const styles = StyleSheet.create({
   wrapper: { width: '100%' },
-  label: { fontSize: 13, fontWeight: '600', marginBottom: 4 },
-  input: { fontSize: 16, borderWidth: 1 },
-  error: { fontSize: 12, marginTop: 4 },
 });

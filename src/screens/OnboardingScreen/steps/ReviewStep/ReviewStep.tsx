@@ -16,11 +16,19 @@ type Nav = NativeStackNavigationProp<AppStackParamList, 'Onboarding'>;
 function Field({ label, value }: { label: string; value: string }) {
   const t = useTheme();
   return (
-    <View style={[styles.fieldRow, { borderBottomColor: t.colors.border }]}>
-      <Text style={[styles.fieldLabel, { color: t.colors.textMuted }]}>
+    <View
+      style={[
+        styles.fieldRow,
+        {
+          borderBottomColor: t.colors.border,
+          paddingVertical: t.spacing.xs + 2,
+        },
+      ]}
+    >
+      <Text style={[t.typography.bodyMedium, { color: t.colors.textMuted }]}>
         {label}
       </Text>
-      <Text style={[styles.fieldValue, { color: t.colors.text }]}>
+      <Text style={[t.typography.bodyMedium, { color: t.colors.text }]}>
         {value || '—'}
       </Text>
     </View>
@@ -59,14 +67,36 @@ export function ReviewStep() {
 
   if (isSuccess) {
     return (
-      <View style={styles.center}>
-        <Text style={[styles.successIcon, { color: t.colors.success }]}>
+      <View
+        style={[
+          styles.center,
+          { paddingTop: t.spacing.xl + t.spacing.lg + t.spacing.sm },
+        ]}
+      >
+        <Text
+          style={[
+            t.typography.display,
+            {
+              color: t.colors.success,
+              marginBottom: t.spacing.sm + t.spacing.xs,
+            },
+          ]}
+        >
           ✓
         </Text>
-        <Text style={[styles.successTitle, { color: t.colors.text }]}>
+        <Text style={[t.typography.title, { color: t.colors.text }]}>
           Onboarding Complete
         </Text>
-        <Text style={[styles.successSub, { color: t.colors.textMuted }]}>
+        <Text
+          style={[
+            t.typography.subtitle,
+            {
+              color: t.colors.textMuted,
+              marginTop: t.spacing.xs,
+              textAlign: 'center',
+            },
+          ]}
+        >
           Your information has been submitted successfully.
         </Text>
         <View style={{ height: t.spacing.lg }} />
@@ -84,7 +114,12 @@ export function ReviewStep() {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={[styles.sectionTitle, { color: t.colors.text }]}>
+      <Text
+        style={[
+          t.typography.section,
+          { color: t.colors.text, marginBottom: t.spacing.sm },
+        ]}
+      >
         Profile
       </Text>
       <Field label="Full Name" value={draft.profile.fullName} />
@@ -92,14 +127,24 @@ export function ReviewStep() {
       <Field label="Nationality" value={draft.profile.nationality} />
 
       <View style={{ height: t.spacing.md }} />
-      <Text style={[styles.sectionTitle, { color: t.colors.text }]}>
+      <Text
+        style={[
+          t.typography.section,
+          { color: t.colors.text, marginBottom: t.spacing.sm },
+        ]}
+      >
         Document
       </Text>
       <Field label="Type" value={draft.document.documentType} />
       <Field label="Number" value={draft.document.documentNumber} />
 
       <View style={{ height: t.spacing.md }} />
-      <Text style={[styles.sectionTitle, { color: t.colors.text }]}>
+      <Text
+        style={[
+          t.typography.section,
+          { color: t.colors.text, marginBottom: t.spacing.sm },
+        ]}
+      >
         Selfie
       </Text>
       <Field
@@ -108,7 +153,12 @@ export function ReviewStep() {
       />
 
       <View style={{ height: t.spacing.md }} />
-      <Text style={[styles.sectionTitle, { color: t.colors.text }]}>
+      <Text
+        style={[
+          t.typography.section,
+          { color: t.colors.text, marginBottom: t.spacing.sm },
+        ]}
+      >
         Address
       </Text>
       <Field label="Address" value={draft.address.addressLine1} />
@@ -128,7 +178,7 @@ export function ReviewStep() {
         ]}
       >
         <Text
-          style={[styles.consentLabel, { color: t.colors.text, flex: 1 }]}
+          style={[t.typography.bodyMedium, { color: t.colors.text, flex: 1 }]}
         >
           I accept the Terms & Conditions
         </Text>
@@ -143,8 +193,12 @@ export function ReviewStep() {
       {submissionError ? (
         <Text
           style={[
-            styles.error,
-            { color: t.colors.danger, marginTop: t.spacing.sm },
+            t.typography.caption,
+            {
+              color: t.colors.danger,
+              marginTop: t.spacing.sm,
+              textAlign: 'center',
+            },
           ]}
         >
           {submissionError}
@@ -182,25 +236,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    paddingTop: 60,
   },
-  successIcon: { fontSize: 48, marginBottom: 12 },
-  successTitle: { fontSize: 22, fontWeight: '700' },
-  successSub: { fontSize: 14, marginTop: 4, textAlign: 'center' },
-  sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: 8 },
   fieldRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 6,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  fieldLabel: { fontSize: 14 },
-  fieldValue: { fontSize: 14, fontWeight: '500' },
   consentRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  consentLabel: { fontSize: 14, fontWeight: '500' },
-  error: { fontSize: 13, fontWeight: '500', textAlign: 'center' },
 });

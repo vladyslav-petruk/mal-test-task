@@ -29,14 +29,19 @@ export function StepIndicator({ currentStep }: Props) {
                 { backgroundColor: bg, borderRadius: t.radius.sm },
               ]}
             >
-              <Text style={[styles.dotText, { color: t.colors.primaryText }]}>
+              <Text
+                style={[t.typography.overline, { color: t.colors.primaryText }]}
+              >
                 {isDone ? '✓' : i + 1}
               </Text>
             </View>
             <Text
               style={[
-                styles.label,
-                { color: isActive ? t.colors.text : t.colors.textMuted },
+                t.typography.micro,
+                {
+                  marginTop: t.spacing.xs,
+                  color: isActive ? t.colors.text : t.colors.textMuted,
+                },
               ]}
               numberOfLines={1}
             >
@@ -58,6 +63,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  dotText: { fontSize: 12, fontWeight: '700' },
-  label: { fontSize: 10, marginTop: 4 },
 });

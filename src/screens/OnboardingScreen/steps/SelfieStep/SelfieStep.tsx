@@ -27,7 +27,7 @@ export function SelfieStep() {
       >
         <Text
           style={[
-            styles.placeholderText,
+            t.typography.bodyEmphasis,
             { color: hasSelfie ? t.colors.success : t.colors.textMuted },
           ]}
         >
@@ -63,5 +63,4 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: 'dashed',
   },
-  placeholderText: { fontSize: 16, fontWeight: '600' },
 });
