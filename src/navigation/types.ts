@@ -1,5 +1,3 @@
-import type { NavigatorScreenParams } from '@react-navigation/native';
-
 /** Auth stack — only Login when logged out. */
 export type AuthStackParamList = {
   Login: undefined;
@@ -12,8 +10,10 @@ export type AppStackParamList = {
   Settings: undefined;
 };
 
-/** Root: either auth or main app (implementation wires one navigator). */
+/**
+ * Root switches between nested `AuthNavigator` and `AppNavigator` (never both mounted).
+ */
 export type RootStackParamList = {
-  Auth: NavigatorScreenParams<AuthStackParamList>;
-  App: NavigatorScreenParams<AppStackParamList>;
+  Auth: undefined;
+  App: undefined;
 };

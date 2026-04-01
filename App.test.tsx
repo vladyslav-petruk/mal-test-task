@@ -3,12 +3,10 @@ import { render, screen } from '@testing-library/react-native';
 import App from './App';
 
 describe('App', () => {
-  it('renders starter text', () => {
+  it('shows auth stack when logged out', () => {
     render(<App />);
 
-    expect(
-      screen.getByText('Open up App.tsx to start working on your app!')
-    ).toBeTruthy();
+    expect(screen.getByText('Login')).toBeTruthy();
   });
 });
 

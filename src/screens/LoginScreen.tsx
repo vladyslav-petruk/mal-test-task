@@ -1,10 +1,13 @@
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-/** Credential entry + mocked login — wire store + API in milestone 1. */
 export function LoginScreen() {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Login</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+});
