@@ -30,7 +30,17 @@ npm run web
 
 ## Tests
 
-Add a test runner during implementation (e.g. Jest with `jest-expo` and Testing Library). Update this section with `npm test` once configured.
+Test environment is configured with Jest (`jest-expo`) and React Native Testing Library.
+
+```bash
+npm test
+```
+
+Watch mode:
+
+```bash
+npm run test:watch
+```
 
 ## GitHub
 
