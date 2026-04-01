@@ -20,7 +20,8 @@ export function HomeScreen() {
   const t = useTheme();
   const navigation = useNavigation<Nav>();
   const user = useAuthStore((s) => s.user);
-  const { currentStep, submissionStatus } = useOnboardingStore();
+  const currentStep = useOnboardingStore((s) => s.currentStep);
+  const submissionStatus = useOnboardingStore((s) => s.submissionStatus);
   const onboardingLabel = getOnboardingLabel(submissionStatus, currentStep);
 
   return (

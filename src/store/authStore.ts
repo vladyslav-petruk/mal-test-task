@@ -15,6 +15,8 @@ import type {
 export const SESSION_EXPIRED_MESSAGE =
   'Session expired. Please sign in again.';
 
+let sessionExpiryTimeout: ReturnType<typeof setTimeout> | null = null;
+
 type AuthState = {
   status: AuthSessionStatus;
   user: User | null;
@@ -40,6 +42,13 @@ type AuthState = {
 
 function persistSession(user: User, session: Session): void {
   saveSession(JSON.stringify({ user, session })).catch(() => {});
+}
+
+function clearSessionExpiryTimer(): void {
+  if (sessionExpiryTimeout) {
+    clearTimeout(sessionExpiryTimeout);
+    sessionExpiryTimeout = null;
+  }
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -71,6 +80,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  /** Clears secure session only. Onboarding draft is left intact (see onboardingStore). */
   logout: () => {
     clearSession().catch(() => {});
     set({
@@ -98,6 +108,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           set({ status: 'logged_in', user, session: newSession });
         } catch {
           await clearSession();
+          /* Onboarding draft in memory is preserved so the user can log in again and resume. */
           set({
             status: 'logged_out',
             sessionExpiredMessage: SESSION_EXPIRED_MESSAGE,
@@ -141,6 +152,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return newSession;
       } catch {
         clearSession().catch(() => {});
+        /* Onboarding draft is not cleared — user can log in again and resume. */
         set({
           status: 'logged_out',
           user: null,
@@ -183,3 +195,42 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     return get().runProtected((token) => apiSubmit(token, draft));
   },
 }));
+
+function scheduleSessionExpiry(state: Pick<AuthState, 'status' | 'session'>): void {
+  clearSessionExpiryTimer();
+  if (!state.session) return;
+  if (state.status === 'logged_out' || state.status === 'logging_in') return;
+
+  const expiresAtMs = new Date(state.session.expiresAt).getTime();
+  const waitMs = Math.max(0, expiresAtMs - Date.now());
+  const sessionToken = state.session.accessToken;
+
+  sessionExpiryTimeout = setTimeout(() => {
+    const current = useAuthStore.getState();
+    if (!current.session || current.session.accessToken !== sessionToken) return;
+    if (!isAccessTokenExpired(current.session)) return;
+
+    clearSession().catch(() => {});
+    useAuthStore.setState({
+      status: 'logged_out',
+      user: null,
+      session: null,
+      error: null,
+      sessionExpiredMessage: SESSION_EXPIRED_MESSAGE,
+    });
+  }, waitMs);
+  if (typeof sessionExpiryTimeout === 'object' && 'unref' in sessionExpiryTimeout) {
+    sessionExpiryTimeout.unref();
+  }
+}
+
+let prevSessionToken: string | null = null;
+let prevStatus: AuthSessionStatus | null = null;
+
+useAuthStore.subscribe((state) => {
+  const nextToken = state.session?.accessToken ?? null;
+  if (nextToken === prevSessionToken && state.status === prevStatus) return;
+  prevSessionToken = nextToken;
+  prevStatus = state.status;
+  scheduleSessionExpiry({ status: state.status, session: state.session });
+});

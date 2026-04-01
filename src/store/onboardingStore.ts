@@ -17,6 +17,12 @@ import type {
   OnboardingSubmissionStatus,
 } from '../types';
 
+/**
+ * Onboarding draft lives in this store only; it is not tied to auth session.
+ * Logout and session expiry (auth store) do not clear draft — users can sign back in
+ * and continue. Draft + step are cleared only via `resetDraft()` (e.g. after a
+ * successful submit when we intentionally clear persisted copy) or explicit reset.
+ */
 export const ONBOARDING_TOTAL_STEPS = 5;
 
 const EMPTY_DRAFT: OnboardingDraft = {
